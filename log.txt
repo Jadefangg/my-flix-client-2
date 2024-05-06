@@ -1,0 +1,4 @@
+127.0.0.1 - - [03/May/2024:15:28:30 +0000] "POST /users HTTP/1.1" 201 185 "-" "PostmanRuntime/7.37.3"
+127.0.0.1 - - [04/May/2024:06:47:30 +0000] "GET /users HTTP/1.1" 401 - "-" "PostmanRuntime/7.37.3"
+127.0.0.1 - - [04/May/2024:06:55:46 +0000] "GET /movies HTTP/1.1" 201 2 "-" "PostmanRuntime/7.37.3"
+127.0.0.1 - - [04/May/2024:06:56:03 +0000] "GET /users HTTP/1.1" 201 1029 "-" "PostmanRuntime/7.37.3"
