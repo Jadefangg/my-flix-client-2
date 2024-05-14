@@ -1,5 +1,5 @@
 //afternoon-shore-78356 >>> heroku app name, https://afternoon-shore-78356.herokuapp.com/ 
-//$env:CONNECTION_URI='mongodb+srv://sartajsingh8:atlaspassword@myflixdb.w89div2.mongodb.net/?retryWrites=true&w=majority&appName=myFlixDB'
+//$env:CONNECTION_URI='mongodb+srv://sartajsingh8:herokupassword@myflixdb.w89div2.mongodb.net/?retryWrites=true&w=majority&appName=myFlixDB'
 
 const express = require('express'),
 morgan = require('morgan'), 
@@ -23,7 +23,8 @@ app.use(express.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 const cors = require('cors');
 app.use(cors());
-//let allowedOrigins = ['*'];
+
+//let allowedOrigins = ['*']; //CHANGED FOR TESTING <<<
 /*app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null, true);
