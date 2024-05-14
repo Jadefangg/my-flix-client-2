@@ -1,3 +1,6 @@
+//afternoon-shore-78356 >>> heroku app name, https://afternoon-shore-78356.herokuapp.com/ 
+//$env:CONNECTION_URI='mongodb+srv://sartajsingh8:atlaspassword@myflixdb.w89div2.mongodb.net/?retryWrites=true&w=majority&appName=myFlixDB'
+
 const express = require('express'),
 morgan = require('morgan'), 
 fs = require('fs'), 
@@ -6,19 +9,20 @@ bodyParser = require('body-parser'),
 uuid = require('uuid'),
 mongoose = require('mongoose');
 const Models = require('./models.js');
+//const fs = require('fs');
+//const topMovies = require('./TopMovies.json');
 
 const Movies = Models.Movies;//importing the movie model from models.js
-
 const Users = Models.Users;
-
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => console.log('Database connected successfully'))
+.catch(err => console.log('Database connection error: ' + err)); //environment variable for connection URI
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
-
 app.use(bodyParser.json());
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+let allowedOrigins = ['http://localhost:8080', 'https://afternoon-shore-78356.herokuapp.com/'];
 app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null, true);
@@ -34,30 +38,48 @@ const passport = require('passport');
 require('./passport');
 const { check, validationResult } = require('express-validator');
 //^^^validation logic here^^^
+const TopMovies =
+[
+ {id:"1", title: 'The Shawshank Redemption', director: 'Frank Darabont', genre: 'Drama', releaseYear: '1994'},
+ {id:"2", title: 'The Godfather', director: 'Francis Ford Coppola', genre: 'Drama', releaseYear: '1972'},
+ {id:"3", title: 'The Dark Knight', director: 'Christopher Nolan', genre: 'Action', releaseYear: '2008'},
+ {id:"4", title: 'The Godfather: Part II', director: 'Francis Ford Coppola', genre: 'Drama', releaseYear: '1974'},
+ {id:"5", title: "Schindler's List", director: 'Steven Spielberg', genre: 'Biography', releaseYear: '1993'},
+ {id:"6", title: 'The Lord of the Rings: The Return of the King', director: 'Peter Jackson', genre: 'Adventure', releaseYear: '2003'},
+ {id:"7", title: 'Pulp Fiction', director: 'Quentin Tarantino', genre: 'Crime', releaseYear: '1994'},
+ {id:"8", title: 'The Good, the Bad and the Ugly', director: 'Sergio Leone', genre: 'Western', releaseYear: '1966'},
+ {id:"9", title: 'The Lord of the Rings: The Fellowship of the Ring', director: 'Peter Jackson', genre: 'Adventure', releaseYear: '2001'},
+ {id:"10", title: 'Fight Club', director: 'David Fincher', genre: 'Drama', releaseYear: '1999'}];
 
+// Read the file, ^ converting into json file so I can execute mongoimport for the movies.
+fs.readFile('TopMovies.json', 'utf8', (err, data) => {
+  if (err) {
+      console.error('Error reading file:', err);
+      return;
+  }
 
+  // Parse the JSON data
+  const TopMovies = JSON.parse(data);
+
+  // Create a write stream
+  const writeStream = fs.createWriteStream('TopMovies_new.json');
+
+  // Write each object to the file with a newline after each object
+  TopMovies.forEach(movie => {
+      writeStream.write(JSON.stringify(movie) + '\n');
+  });
+
+  // Close the write stream
+  writeStream.end();
+});
+//mongoimport --uri mongodb+srv://sartajsingh8:oPuahJxUXKuI8r6G@myflixdb.w89div2.mongodb.net/myFlixDB --collection movies --type json --file TopMovies.json
 // create a write stream (in append mode)
-// a ‘log.txt’ file is created in root directory
+
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
 
 // setup the logger
 app.use(morgan('combined', {stream: accessLogStream}));
 
-
-
-//UPDATE: Handle PUT request to update user information
-/* We'll expect JSON in this format
-{
-  Username: String,
-  (required)
-  Password: String,
-  (required)
-  Email: String,
-  (required)
-  Birthday: Date,
-  FavouriteMovies: []
-}
-*/
 app.post('/users', async (req, res) => { // Create a new user
   let hashedPassword = Users.hashPassword(req.body.Password);
   await Users.findOne({ Username: req.body.Username }) // Search to see if a user with the requested username already exists
@@ -85,6 +107,7 @@ app.post('/users', async (req, res) => { // Create a new user
       res.status(500).send('Error: ' + error);
     });
 });
+//Update a user's info, by username.
 app.put("/users/:username", [
   //input validation here
   check('Username', 'Username is required').isLength({min: 5}),
@@ -173,7 +196,7 @@ app.delete( '/users/:id/:movieTitle', passport.authenticate('jwt', {session: fal
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find()
     .then((movies) => {
-        res.status(201).json(movies);
+        res.status(201).json(TopMovies);
     })
     .catch((err) => {
         console.error(err);
@@ -181,6 +204,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
     });
 });
 
+//mongoimport --uri mongodb+srv://sartajsingh8:how@myflixdb.w89div2.mongodb.net/myflixDB --collection movies --type json --file <FILENAME>
 
 // READ: Handle GET request to retrieve a movie by its title
 app.get('/movies/:title', passport.authenticate('jwt', {session: false}), async (req, res) => {
@@ -271,7 +295,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', {session: false}), a
 
 
 app.get('/', (req, res) => {
-    res.send('Welcome to my movies app....GETFLIX!!');
+    res.send('Welcome to my movies app....myFLIX!!');
 });
 
 app.use(express.static('public'));
@@ -286,7 +310,182 @@ app.use((err, req, res, next) => {
 });
 */
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080; //correctly set up for both local and Heroku deployment.
 app.listen(port, '0.0.0.0',() => {
   console.log('Listening on Port ' + port);
 });
+/*
+const passport = require("passport");
+const Models = require("./models.js");
+const { check, validationResult } = require("express-validator");
+
+const Users = Models.User;
+
+module.exports = (app) => {
+  // Returns a JSON object of all users
+  app.get(
+    "/users",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      await Users.find()
+        .then(function (users) {
+          res.status(200).json(users);
+        })
+        .catch(function (err) {
+          console.error(err);
+          res.status(500).send("Error: " + err);
+        });
+    }
+  );
+
+  // Allows new users to register
+  app.post(
+    "/users",
+    [
+      check("username", "Username is required").isLength({ min: 5 }),
+      check(
+        "username",
+        "Username contains non alpanumeric characters - not allowed."
+      ).isAlphanumeric(),
+      check("password", "Password is required").not().isEmpty(),
+      check("email", "Email does not appear to be valid").isEmail(),
+    ],
+
+    async (req, res) => {
+      let errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+      }
+      if (!req.body.password || !req.body.username) {
+        return res.status(400).json({ error: "username or password missing" });
+      }
+      let hashedPassword = Users.hashPassword(req.body.password);
+      await Users.findOne({ username: req.body.username })
+        .then((user) => {
+          if (user) {
+            return res.status(400).send(req.body.username + "already exists.");
+          } else {
+            Users.create({
+              username: req.body.username,
+              password: hashedPassword,
+              email: req.body.email,
+              birthdate: req.body.birthdate,
+            })
+              .then((user) => {
+                res.status(201).json(user);
+              })
+              .catch((error) => {
+                console.error(error);
+                res.status(500).send("Error: " + error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send("Error: " + error);
+        });
+    }
+  );
+
+  // Allows users to update their user info
+  app.put(
+    "/users/:username",
+    [
+      check("username", "Username is required").isLength({ min: 5 }),
+      check(
+        "username",
+        "Username contains non alpanumeric characters - not allowed."
+      ).isAlphanumeric(),
+      check("password", "Password is required").not().isEmpty(),
+      check("email", "Email does not appear to be valid").isEmail(),
+      (req, res, next) => {
+        let errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(422).json({ errors: errors.array() });
+        }
+        next();
+      },
+      passport.authenticate("jwt", { session: false }),
+    ],
+    async (req, res) => {
+      await Users.findOneAndUpdate(
+        { username: req.params.username },
+        {
+          $set: {
+            username: req.body.username,
+            password: req.body.password,
+            email: req.body.email,
+            birthdate: req.body.birthdate,
+          },
+        },
+        { new: true }
+      )
+        .then((updatedUser) => {
+          res.json(updatedUser);
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send("Error: " + err);
+        });
+    }
+  );
+
+  // Allows users to add a movie to their list of favorites
+  app.post(
+    "/users/:username/movies/:_id",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      await Users.findOneAndUpdate(
+        { username: req.params.username },
+        { $push: { favoriteMovies: req.params._id } }
+      )
+        .then((updatedUser) => {
+          res.status(200).json(updatedUser);
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send("Error: " + err);
+        });
+    }
+  );
+
+  // Allows users to remove a movie from their list of favorites
+  app.delete(
+    "/users/:username/movies/:ObjectId",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      await Users.findOneAndUpdate(
+        { username: req.params.username },
+        { username: req.params.username },
+        { $pull: { favoriteMovies: req.params.ObjectId } }
+      )
+        .then((updatedUser) => {
+          res.status(200).json(updatedUser);
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send("Error: " + err);
+        });
+    }
+  );
+
+  // Allows existing users to deregister
+  app.delete(
+    "/users/:username",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      await Users.findOneAndDelete({ username: req.params.username })
+        .then((user) => {
+          if (!user) {
+            res.status(400).send(req.params.username + " was not found.");
+          } else {
+            res.status(200).send(req.params.username + " was deleted.");
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send("Error: " + err);
+        });
+    }
+  );
+};*/
