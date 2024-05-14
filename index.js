@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'https://afternoon-shore-78356.herokuapp.com/'];
+let allowedOrigins = ['*'];
 app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null, true);
