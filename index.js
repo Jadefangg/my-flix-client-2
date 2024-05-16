@@ -1,7 +1,7 @@
 const express = require('express'),
 morgan = require('morgan'), 
 fs = require('fs'), 
-path = require('path'),
+//path = require('path'),
 bodyParser = require('body-parser'),
 uuid = require('uuid'),
 mongoose = require('mongoose');
@@ -23,8 +23,8 @@ app.use(cors({
     if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
       let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
       return callback(new Error(message ), false);
-    }
-    return callback(null, true);
+    }//$env:CONNECTION_URI='mongodb+srv://sartajsingh:herokupassword@mplix.yivwrwe.mongodb.net/?retryWrites=true&w=majority&appName=mplix'
+    return callback(null, true); //heroku git:remote -a frozen-bastion-60513 <<<  
   }
 }));
 let auth = require('./auth')(app);
