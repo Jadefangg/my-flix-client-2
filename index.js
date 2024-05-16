@@ -116,7 +116,7 @@ app.put("/users/:username", [
 
     //condition to check that username in request matches username in request params
     if(req.user.username !== req.params.username) {
-      return res.status(400).send('Permission denied.');
+      return res.status(400).send('Update to user will be made.');
     }
     //condition ends, finds user and updates their info
     await Users.findOneAndUpdate(
