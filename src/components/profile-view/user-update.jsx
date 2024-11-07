@@ -21,7 +21,7 @@ export const ProfileUpdate = ({user, updatedUser}) => {
             Birthday: Birthday
         }
     
-            fetch(`https://my-flix-cf-fd6a3633859c.herokuapp.com/users/${user.Name}`, 
+            fetch(`https://frozen-bastion-60513-44d63176384c.herokuapp.com/users/${user.Name}`, 
             {
                 method: "PUT",
                 headers: {

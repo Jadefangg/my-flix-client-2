@@ -14,7 +14,7 @@ export const LoginView = ({ onLoggedIn }) => {
       Password: Password
     };
 
-    fetch("https://my-flix-cf-fd6a3633859c.herokuapp.com/login", {
+    fetch("https://frozen-bastion-60513-44d63176384c.herokuapp.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

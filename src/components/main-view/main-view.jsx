@@ -25,7 +25,7 @@ export const MainView = () => {
         return;
     }
 
-    fetch("https://my-flix-cf-fd6a3633859c.herokuapp.com/movies", {
+    fetch("https://frozen-bastion-60513-44d63176384c.herokuapp.com/movies", {
         headers: { Authorization: `Bearer ${token}` }
     })
         .then((response) => response.json())

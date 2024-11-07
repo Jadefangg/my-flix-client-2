@@ -19,7 +19,7 @@ export const MovieView = ({ user, token, setUser }) => {
 }, [movieId, user]);
 
 const addtoFavorite = () => {
-  fetch(`https://my-flix-cf-fd6a3633859c.herokuapp.com/users/${user.Name}/FavoriteMovies/${movieId}`, {
+  fetch(`https://frozen-bastion-60513-44d63176384c.herokuapp.com/users/${user.Name}/FavoriteMovies/${movieId}`, {
       method: "PUT",
       headers: { 
           "Content-Type": "application/json",
@@ -44,7 +44,7 @@ const addtoFavorite = () => {
 };
 
 const removefromFavorite = () => {
-  fetch(`https://my-flix-cf-fd6a3633859c.herokuapp.com/users/${user.Name}/FavoriteMovies/${movieId}`, {
+  fetch(`https://frozen-bastion-60513-44d63176384c.herokuapp.com/users/${user.Name}/FavoriteMovies/${movieId}`, {
       method: "DELETE",
       headers: { 
           "Content-Type": "application/json",
