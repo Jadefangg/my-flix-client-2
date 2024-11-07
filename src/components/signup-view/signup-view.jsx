@@ -16,6 +16,7 @@ export const SignupView = () => {
           Email: Email,
           Birthday: Birthday
         };
+        console.log(data);
     
         fetch("https://frozen-bastion-60513-44d63176384c.herokuapp.com/users", {
           method: "POST",
