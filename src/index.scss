@@ -1,0 +1,22 @@
+$color: steelblue;
+$primary: Darkorange;
+$body-bg: Powderblue;
+
+.my-flix {
+  color: $color;
+}
+
+Button {
+  padding: 4px 12px 4px 12px;
+  color: whitesmoke;
+  background-color: Orange;
+  border: none;
+  border-radius: 4px;
+}
+
+div {
+  margin-bottom: 5px; 
+}
+
+@import '~bootstrap/scss/bootstrap.scss';
+
